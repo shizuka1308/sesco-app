@@ -1,4 +1,19 @@
+# API endpoint to filter reactors by state
+@routes.route('/reactors/filter', methods=['GET'])
+def filter_reactors_by_state_route():
+    state = request.args.get('state')
+    if is_empty_or_whitespace(state):
+        return jsonify(INVALID_STATE), 400
 
+    if not isinstance(state, str):
+        return jsonify(INVALID_STATE_TYPE), 400
+
+    reactors = get_all_reactors(state)
+    if reactors:
+        return jsonify(reactors)
+    else:
+        return jsonify(REACTOR_NOT_FOUND), 404
+        
 # API endpoint to retrieve reactor details by license number
 @routes.route('/reactors/license', methods=['GET'])
 def get_reactor_by_license_number_route():
