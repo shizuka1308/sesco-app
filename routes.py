@@ -1,3 +1,35 @@
+# routes.py
+# Import the Flask Blueprint class and other necessary modules
+from flask import Blueprint, Flask, request, jsonify
+from database import (
+    get_all_reactors,
+    get_reactor_details,
+    list_reactors_on_outage_query,
+    get_last_known_outage_date,
+    get_reactor_by_license_number,
+)
+from utilities import is_empty_or_whitespace, is_valid_date_format
+from errors import (
+    INVALID_REACTOR_NAME,
+    INVALID_REACTOR_NAME_TYPE,
+    REACTOR_NOT_FOUND,
+    INVALID_STATE,
+    INVALID_STATE_TYPE,
+    INVALID_LICENSE_NUMBER,
+    INVALID_LICENSE_NUMBER_TYPE,
+    INVALID_DATE_FORMAT,
+)
+
+routes = Blueprint('routes', __name__)
+# API endpoint to retrieve all reactors
+@routes.route('/reactors/all', methods=['GET'])
+def get_all_reactors_route():
+    reactors = get_all_reactors()
+    if reactors:
+        return jsonify(reactors)
+    else:
+        return jsonify(REACTOR_NOT_FOUND), 404
+
 # API endpoint to retrieve reactor details by name
 @routes.route('/reactors/details', methods=['GET'])
 def get_reactor_details_route():
@@ -13,7 +45,7 @@ def get_reactor_details_route():
         return jsonify(reactor)
     else:
         return jsonify(REACTOR_NOT_FOUND), 404
-        
+
 # API endpoint to filter reactors by state
 @routes.route('/reactors/filter', methods=['GET'])
 def filter_reactors_by_state_route():
