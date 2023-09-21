@@ -1,3 +1,18 @@
+import requests
+from clickhouse_driver import Client
+from io import StringIO
+from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+def establish_clickhouse_connection():
+    """Establish a connection to ClickHouse."""
+    clickhouse_host = os.getenv("CLICKHOUSE_HOST")
+    clickhouse_database = os.getenv("CLICKHOUSE_DATABASE")
+    return Client(host=clickhouse_host, database=clickhouse_database)
+
 def main():
     try:
         client = establish_clickhouse_connection()
