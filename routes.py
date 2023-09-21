@@ -1,3 +1,20 @@
+
+# API endpoint to retrieve reactor details by license number
+@routes.route('/reactors/license', methods=['GET'])
+def get_reactor_by_license_number_route():
+    license_number = request.args.get('license_number')
+    if is_empty_or_whitespace(license_number):
+        return jsonify(INVALID_LICENSE_NUMBER), 400
+
+    if not isinstance(license_number, str):
+        return jsonify(INVALID_LICENSE_NUMBER_TYPE), 400
+
+    reactor = get_reactor_by_license_number(license_number)
+    if reactor:
+        return jsonify(reactor)
+    else:
+        return jsonify(REACTOR_NOT_FOUND), 404
+
 # API endpoint to filter reactors on outage by date range
 @routes.route('/reactors/on_outage/filter', methods=['GET'])
 def filter_reactors_on_outage_by_date_route():
@@ -8,7 +25,7 @@ def filter_reactors_on_outage_by_date_route():
 
     reactors_on_outage = list_reactors_on_outage_query(start_date, end_date)
     return jsonify(reactors_on_outage)
-    
+
 # API endpoint to get the last known outage date of a reactor
 @routes.route('/reactors/last_known_outage', methods=['GET'])
 def get_last_known_outage_date_for_reactor_route():
