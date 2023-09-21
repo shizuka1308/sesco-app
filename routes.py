@@ -1,3 +1,19 @@
+# API endpoint to retrieve reactor details by name
+@routes.route('/reactors/details', methods=['GET'])
+def get_reactor_details_route():
+    reactor_name = request.args.get('reactor_name')
+    if is_empty_or_whitespace(reactor_name):
+        return jsonify(INVALID_REACTOR_NAME), 400
+
+    if not isinstance(reactor_name, str):
+        return jsonify(INVALID_REACTOR_NAME_TYPE), 400
+
+    reactor = get_reactor_details(reactor_name)
+    if reactor:
+        return jsonify(reactor)
+    else:
+        return jsonify(REACTOR_NOT_FOUND), 404
+        
 # API endpoint to filter reactors by state
 @routes.route('/reactors/filter', methods=['GET'])
 def filter_reactors_by_state_route():
@@ -13,7 +29,7 @@ def filter_reactors_by_state_route():
         return jsonify(reactors)
     else:
         return jsonify(REACTOR_NOT_FOUND), 404
-        
+
 # API endpoint to retrieve reactor details by license number
 @routes.route('/reactors/license', methods=['GET'])
 def get_reactor_by_license_number_route():
