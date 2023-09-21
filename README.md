@@ -78,7 +78,7 @@ To run the Nuclear Reactor Information System on your local machine, follow thes
    #Wait for Reactor table created! message
    python3 scripts/create_reactors.py
 
-   #Wait for Reactor Status table created! message
+   #Wait for Data processing and insertion completed successfully. message
    #Please ignore any warnings you see
    python3 scripts/create_reactor_status.py
 
