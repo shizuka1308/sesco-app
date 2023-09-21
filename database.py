@@ -33,3 +33,25 @@ def get_all_reactors(state_filter=None):
         reactors_list.append(reactor_dict)
 
     return reactors_list
+
+# Function to retrieve reactor details by name
+def get_reactor_details(reactor_name):
+    client = create_clickhouse_client()
+    query = f"SELECT * FROM reactors WHERE PlantNameUnitNumber ILIKE '%{reactor_name}%'"
+    result = client.execute(query)
+    client.disconnect()
+    reactors_list = []
+    for row in result:
+        reactor_dict = {
+            "YearOfUpdate": row[0],
+            "PlantNameUnitNumber": row[1],
+            "NRCReactorUnitWebPage": row[2],
+            "DocketNumber": row[3],
+            "LicenseNumber": row[4],
+            "Location": row[5], 
+            "NRCRegion": row[6],  
+            "State": row[7],  
+        }
+        reactors_list.append(reactor_dict)
+
+    return reactors_list if result else None
