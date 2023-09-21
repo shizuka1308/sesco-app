@@ -97,3 +97,30 @@ def get_last_known_outage_date(reactor_name):
         reactors_list.append(reactor_dict)
 
     return reactors_list if result else None
+
+# Function to retrieve reactor details by license number
+def get_reactor_by_license_number(license_number):
+    client = create_clickhouse_client()
+    query = f"""
+        SELECT *
+        FROM reactors
+        WHERE LicenseNumber ILIKE '%{license_number}%'
+        LIMIT 1
+    """
+    result = client.execute(query)
+    client.disconnect()
+    reactors_list = []
+    for row in result:
+        reactor_dict = {
+            "YearOfUpdate": row[0],
+            "PlantNameUnitNumber": row[1],
+            "NRCReactorUnitWebPage": row[2],
+            "DocketNumber": row[3],
+            "LicenseNumber": row[4],
+            "Location": row[5], 
+            "NRCRegion": row[6],  
+            "State": row[7],  
+        }
+        reactors_list.append(reactor_dict)
+
+    return reactors_list if result else None
