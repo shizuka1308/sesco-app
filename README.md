@@ -56,6 +56,18 @@ To run the Nuclear Reactor Information System on your local machine, follow thes
     DATA_FILE_URL=your_data_url
     DATA_FILE_PATH=path_to_excel_file.xlsx
 
+   My .env
+   # ClickHouse Configuration
+   CLICKHOUSE_HOST= "localhost"
+   CLICKHOUSE_DATABASE= "nrc_reactors_details"
+
+   BASE_URL = "http://127.0.0.1:5000" 
+   # File path
+   DATA_FILE_PATH=data-files/reactors-operating.xlsx
+
+   # File reactor status path
+   DATA_FILE_URL = "https://www.nrc.gov/reading-rm/doc-collections/event-status/reactor-status/powerreactorstatusforlast365days.txt"
+
 5. **Database Setup:**
    Ensure you have ClickHouse installed and configured with the necessary database.
    ```bash
