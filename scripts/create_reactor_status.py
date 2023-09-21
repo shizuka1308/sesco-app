@@ -44,6 +44,9 @@ def download_and_insert_data(client):
             # Split the line by "|" to extract fields
             fields = line.strip().split("|")
 
+            if len(fields) < 3:
+                continue  # Skip this row if it doesn't have enough fields
+
             # Extract relevant fields
             report_date_str, reactor_name, power = fields[:3]
 
