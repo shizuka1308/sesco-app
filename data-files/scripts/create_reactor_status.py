@@ -26,7 +26,49 @@ def create_reactor_status_table(client):
     ORDER BY report_date;
     """
     client.execute(create_table_query)
-    
+
+def download_and_insert_data(client):
+    """Download data from the URL and insert it into the reactor_status table."""
+    url = os.getenv("DATA_FILE_URL")
+
+    # Download the data from the URL
+    response = requests.get(url)
+    data_text = response.text
+
+    # Read the data into a StringIO object for processing
+    data_io = StringIO(data_text)
+
+    # Process and insert data into the database
+    for line in data_io:
+        if not line.startswith("ReportDt"):  # Skip the header line
+            # Split the line by "|" to extract fields
+            fields = line.strip().split("|")
+
+            # Extract relevant fields
+            report_date_str, reactor_name, power = fields[:3]
+
+            # Parse the original date format (e.g., "9/19/2023 12:00:00 AM")
+            original_date = datetime.strptime(report_date_str, "%m/%d/%Y %I:%M:%S %p")
+
+            # Convert the parsed date to the desired format (YYYY-MM-DD)
+            formatted_date = original_date.strftime("%Y-%m-%d")
+
+            # Check if the same date and reactor data already exist in the database
+            query = f"""
+            SELECT count() FROM reactor_status 
+            WHERE report_date = '{formatted_date}' AND reactor_name = '{reactor_name}'
+            """
+            result = client.execute(query)
+
+            # If no matching record exists, insert the data
+            if result[0][0] == 0:
+                insert_query = f"""
+                INSERT INTO reactor_status (report_date, reactor_name, power)
+                VALUES
+                ('{formatted_date}', '{reactor_name}', {int(power)})
+                """
+                client.execute(insert_query)
+                 
 def main():
     try:
         client = establish_clickhouse_connection()
