@@ -69,5 +69,28 @@ def insert_data_into_clickhouse(client, data):
         # Insert the data into the ClickHouse table
         table_name = 'reactors'
         client.execute(f"INSERT INTO {table_name} VALUES", data.values.tolist())
+        print('Reactor Table Created!')
     except Exception as e:
         print(f"Error inserting data into ClickHouse: {str(e)}")
+
+def main():
+    try:
+        clickhouse_host = os.getenv('CLICKHOUSE_HOST')  
+        clickhouse_database = os.getenv('CLICKHOUSE_DATABASE')
+
+        # Establish a connection to ClickHouse
+        client = Client(host=clickhouse_host, database=clickhouse_database)
+
+        data = load_data()
+        if data is not None:
+            create_clickhouse_table(client)
+            insert_data_into_clickhouse(client, data)
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
+    finally:
+        # Close the ClickHouse connection
+        if client:
+            client.disconnect()
+
+if __name__ == "__main__":
+    main()
