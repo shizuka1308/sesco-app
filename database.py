@@ -75,3 +75,25 @@ def list_reactors_on_outage_query(start_date, end_date):
         reactors_list.append(reactor_dict)
 
     return reactors_list
+
+# Function to get the last known outage date of a reactor
+def get_last_known_outage_date(reactor_name):
+    client = create_clickhouse_client()
+    query = f"""
+        SELECT reactor_name, report_date
+        FROM reactor_status
+        WHERE reactor_name ILIKE '%{reactor_name}%' AND power = 0
+        ORDER BY report_date DESC
+        LIMIT 1
+    """
+    result = client.execute(query)
+    client.disconnect()
+    reactors_list = []
+    for row in result:
+        reactor_dict = {
+            "reactor_name": row[0],
+            "report_date": row[1]
+        }
+        reactors_list.append(reactor_dict)
+
+    return reactors_list if result else None
