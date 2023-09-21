@@ -55,3 +55,23 @@ def get_reactor_details(reactor_name):
         reactors_list.append(reactor_dict)
 
     return reactors_list if result else None
+
+# Function to list reactors on outage for a given date range
+def list_reactors_on_outage_query(start_date, end_date):
+    client = create_clickhouse_client()
+    query = f"""
+        SELECT reactor_name, report_date
+        FROM reactor_status
+        WHERE report_date BETWEEN '{start_date}' AND '{end_date}' AND power = 0
+    """
+    result = client.execute(query)
+    client.disconnect()
+    reactors_list = []
+    for row in result:
+        reactor_dict = {
+            "reactor_name": row[0],
+            "report_date": row[1]
+        }
+        reactors_list.append(reactor_dict)
+
+    return reactors_list
