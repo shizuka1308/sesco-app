@@ -40,3 +40,26 @@ def load_data():
     except Exception as e:
         print(f"Error loading data: {str(e)}")
         return None
+
+def create_clickhouse_table(client):
+    try:
+        # Create the ClickHouse table if it doesn't exist
+        table_name = 'reactors'
+        create_table_query = f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
+            YearOfUpdate Int32,
+            PlantNameUnitNumber String,
+            NRCReactorUnitWebPage String,
+            DocketNumber String,
+            LicenseNumber String,
+            Location String,
+            NRCRegion Nullable(Int32),
+            State String
+
+        )
+        ENGINE = MergeTree()
+        ORDER BY (YearOfUpdate)
+        """
+        client.execute(create_table_query)
+    except Exception as e:
+        print(f"Error creating ClickHouse table: {str(e)}")
