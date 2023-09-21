@@ -63,3 +63,11 @@ def create_clickhouse_table(client):
         client.execute(create_table_query)
     except Exception as e:
         print(f"Error creating ClickHouse table: {str(e)}")
+
+def insert_data_into_clickhouse(client, data):
+    try:
+        # Insert the data into the ClickHouse table
+        table_name = 'reactors'
+        client.execute(f"INSERT INTO {table_name} VALUES", data.values.tolist())
+    except Exception as e:
+        print(f"Error inserting data into ClickHouse: {str(e)}")
